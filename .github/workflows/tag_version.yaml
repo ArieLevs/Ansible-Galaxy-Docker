@@ -1,0 +1,45 @@
+name: Tag Role
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Ansible Lint
+        run: |
+          pip install ansible-lint==4.3.5
+          # the -x 403 will ignore the 403 warning in that playbook so workflow will pass
+          echo "running command ansible-lint -x 403 ansible_sample_role.yaml"
+          ansible-lint -x 403 ansible_sample_role.yaml
+
+  tag:
+    if: github.ref == 'refs/heads/master'
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Bump version
+        id: role_version_bump
+        run: |
+          pip install pybump==1.3.3
+          echo "::set-output name=role_version::$(pybump bump --level patch --file VERSION)"
+
+      - name: Create new tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a ${{ steps.role_version_bump.outputs.role_version }} -m "generate tag version: ${{ steps.role_version_bump.outputs.role_version }}"
+
+          git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/ArieLevs/Ansible-Galaxy-Docker ${{ steps.role_version_bump.outputs.role_version }}
