@@ -5,7 +5,8 @@ galaxy_info:
   license: license (MIT)
   min_ansible_version: 2.9.6
   platforms:
-    - name: CentOS
+    # Supported platforms list here https://galaxy.ansible.com/api/v1/platforms/
+    - name: EL
       versions:
         - 7
         - 8
