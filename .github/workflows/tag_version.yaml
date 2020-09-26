@@ -39,6 +39,12 @@ jobs:
         run: |
           git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git config --local user.name "GitHub Action"
-          git tag -a ${{ steps.role_version_bump.outputs.role_version }} -m "generate tag version: ${{ steps.role_version_bump.outputs.role_version }}"
 
+          # commit and push version bump
+          git add VERSION
+          git commit -m "update version to: ${{ steps.role_version_bump.outputs.role_version }} (github action)"
+          git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/ArieLevs/Ansible-Galaxy-Docker HEAD:master
+
+          # tag and publish new version
+          git tag -a ${{ steps.role_version_bump.outputs.role_version }} -m "generate tag version: ${{ steps.role_version_bump.outputs.role_version }}"
           git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/ArieLevs/Ansible-Galaxy-Docker ${{ steps.role_version_bump.outputs.role_version }}
