@@ -15,9 +15,8 @@ jobs:
       - name: Ansible Lint
         run: |
           pip install ansible-lint==4.3.5
-          # the -x 403 will ignore the 403 warning in that playbook so workflow will pass
-          echo "running command ansible-lint -x 403 ansible_sample_role.yaml"
-          ansible-lint -x 403 ansible_sample_role.yaml
+          echo "running command ansible-lint"
+          ansible-lint
 
   tag:
     if: github.ref == 'refs/heads/master'
