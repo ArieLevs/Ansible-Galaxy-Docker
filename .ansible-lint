@@ -2,3 +2,7 @@ skip_list:
     # skip 106 https://ansible-lint.readthedocs.io/en/latest/default_rules.html#role-name-does-not-match-a-z-a-z0-9-pattern
     # due to this change https://galaxy.ansible.com/docs/contributing/creating_role.html#role-names
     - '106'
+
+warn_list:
+    # ignore [403] Package installs should not use latest error
+    - '403'
