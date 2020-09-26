@@ -48,3 +48,9 @@ jobs:
           # tag and publish new version
           git tag -a ${{ steps.role_version_bump.outputs.role_version }} -m "generate tag version: ${{ steps.role_version_bump.outputs.role_version }}"
           git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/ArieLevs/Ansible-Galaxy-Docker ${{ steps.role_version_bump.outputs.role_version }}
+
+      - name: Import galaxy role
+        run: |
+          # the GITHUB_REPOSITORY var will return owner/repository_name
+          # as described here https://docs.github.com/en/free-pro-team@latest/actions/reference/environment-variables#default-environment-variables
+          ansible-galaxy role import --api-key ${{ secrets.GALAXY_API_KEY }} ${GITHUB_REPOSITORY%/*} ${GITHUB_REPOSITORY#*/}
