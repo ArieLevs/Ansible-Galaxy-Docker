@@ -5,22 +5,6 @@
 - include: debian.yaml
   when: ansible_os_family == 'Debian'
 
-- name: Docker | Check if docker.service already exists
-  stat:
-    path: /etc/systemd/system/multi-user.target.wants/docker.service
-  register: docker_service_exists
-
-- name: Docker | Configure Docker daemon
-  template:
-    src: docker.service.conf.j2
-    dest: /etc/systemd/system/multi-user.target.wants/docker.service
-    mode: '0644'
-
-- name: restart docker daemon
-  service:
-    name: docker
-    state: restarted
-
 - name: reload systemd
   systemd:
     daemon_reload: yes
@@ -30,5 +14,3 @@
     name: docker
     enabled: yes
     state: restarted
-    daemon_reload: yes
-  when: not docker_service_exists.stat.exists
